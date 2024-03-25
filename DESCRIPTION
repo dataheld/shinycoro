@@ -16,8 +16,10 @@ License: MIT + file LICENSE
 URL: https://github.com/dataheld/shinycoro
 BugReports: https://github.com/dataheld/shinycoro/issues
 Imports:
+    future,
     httr2,
     options,
+    promises,
     rlang,
     shiny
 Encoding: UTF-8

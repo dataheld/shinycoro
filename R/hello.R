@@ -4,6 +4,7 @@
 #'
 #' @export
 hello <- function() {
+  future::plan(future::multicore, workers = n_of_ex)
   shiny::shinyApp(
     hello_ui(),
     hello_server,
@@ -25,14 +26,14 @@ hello_ui <- function() {
         inputId = "order",
         label = "Execution Order",
         choices = c(
-          `Syncronous (default)` = "sync",
-          `Asyncronous` = "async"
+          `Synchronous (shiny default)` = "sync",
+          `Asynchronous (using promises)` = "async"
         )
       ),
       shiny::actionButton("reload", label = "Invalidate"),
       bslib::value_box(
         title = "Run Counter",
-        value = shiny::textOutput("reload")
+        value = shiny::textOutput("counter")
       )
     ),
     ex_cards_ui("done")
@@ -43,14 +44,23 @@ hello_ui <- function() {
 #' @param input,output,session See [shiny::shinyApp()].
 #' @export
 hello_server <- function(input, output, session) {
-  res_fun <- slow_fun
+  counter <- shiny::reactive(input$reload)
+  res_fun <- shiny::reactive({
+    switch(
+      input$order,
+      sync = slow_fun,
+      async = promisefy(slow_fun)
+    )
+  })
   ex_cards_server(
     id = "done",
-    counter = shiny::reactive(input$reload),
+    counter = counter,
     res_fun = res_fun
   )
-  output$reload <- shiny::renderText(input$reload)
+  output$counter <- shiny::renderText(counter())
 }
+
+n_of_ex <- 4
 
 # slow funs ===
 
@@ -58,7 +68,6 @@ hello_server <- function(input, output, session) {
 #' @export
 slow_fun <- function() {
   Sys.sleep(2)
-  paste("Done.")
 }
 
 # several examples ====
@@ -73,7 +82,7 @@ NULL
 ex_cards_ui <- function(id) {
   ns <- shiny::NS(id)
   purrr::map(
-    c("a", "b"),
+    letters[1:n_of_ex],
     function(x) {
       ex_card_ui(ns(x))
     }
@@ -85,12 +94,11 @@ ex_cards_ui <- function(id) {
 #' @param res_fun A (slow) function to calculate each of the results.
 #' @export
 ex_cards_server <- function(id, counter, res_fun) {
-  abort_if_not_reactive(counter)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
       purrr::map(
-        c("a", "b"),
+        letters[1:n_of_ex],
         function(x) {
           ex_card_server(id = x, counter = counter, res_fun = res_fun)
         }
@@ -152,12 +160,13 @@ ex_card_body_ui <- function(id) {
 #' @export
 ex_card_body_server <- function(id, counter, res_fun) {
   abort_if_not_reactive(counter)
+  abort_if_not_reactive(res_fun)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
       output$res <- shiny::renderText({
         counter()  # this takes care of the invalidation
-        res_fun()
+        res_fun()()
       })
     }
   )
