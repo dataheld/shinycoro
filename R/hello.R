@@ -112,7 +112,7 @@ ex_card_ui <- function(id) {
   ns <- shiny::NS(id)
   bslib::card(
     bslib::card_header(paste("Output", id)),
-    bslib::card_body(shiny::textOutput(ns("res"))),
+    ex_card_body_ui(ns("body")),
     bslib::card_footer(shiny::textOutput(ns("counter_this")))
   )
 }
@@ -125,9 +125,36 @@ ex_card_server <- function(id, counter, res_fun) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
+      ex_card_body_server(id = "body", counter = counter, res_fun = res_fun)
       output$counter_this <- shiny::renderText({
         paste("This is invalidation count", counter())
       })
+    }
+  )
+}
+
+# one example body ====
+
+#' Example Card Body
+#' @name ex_card_body
+NULL
+
+#' @describeIn ex_card_body Module UI
+#' @inheritParams shiny::NS
+#' @export
+ex_card_body_ui <- function(id) {
+  ns <- shiny::NS(id)
+  bslib::card_body(shiny::textOutput(ns("res")))
+}
+
+#' @describeIn ex_card_body Module Server
+#' @inheritParams ex_cards_server
+#' @export
+ex_card_body_server <- function(id, counter, res_fun) {
+  abort_if_not_reactive(counter)
+  shiny::moduleServer(
+    id = id,
+    module = function(input, output, session) {
       output$res <- shiny::renderText({
         counter()  # this takes care of the invalidation
         res_fun()
