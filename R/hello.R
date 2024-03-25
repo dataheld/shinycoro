@@ -17,10 +17,21 @@ hello <- function() {
 hello_ui <- function() {
   require_namespace2("bslib")
   bslib::page_sidebar(
-    shiny::textOutput("reload"),
+    bslib::card(
+      bslib::card_header("Output A"),
+      bslib::card_body(shiny::textOutput("A"))
+    ),
+    bslib::card(
+      bslib::card_header("Output B"),
+      bslib::card_body(shiny::textOutput("B"))
+    ),
     title = NULL,
     sidebar = bslib::sidebar(
-      shiny::actionButton("reload", label = "Reload App")
+      shiny::actionButton("reload", label = "Reload App"),
+      bslib::value_box(
+        title = "Run Counter",
+        value = shiny::textOutput("reload")
+      )
     )
   )
 }
@@ -32,4 +43,18 @@ hello_server <- function(input, output, session) {
   output$reload <- shiny::renderText({
     input$reload
   })
+  output$A <- shiny::renderText({
+    slow_fun(input$reload)
+  })
+  output$B <- shiny::renderText({
+    slow_fun(input$reload)
+  })
+}
+
+#' A slow function
+#' @param x Integer, giving the current run count.
+#' @export
+slow_fun <- function(x = 0) {
+  Sys.sleep(3)
+  paste("Done with run", x)
 }
