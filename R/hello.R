@@ -68,6 +68,7 @@ n_of_ex <- 4
 #' @export
 slow_fun <- function() {
   Sys.sleep(2)
+  "Done"
 }
 
 # several examples ====
@@ -164,10 +165,8 @@ ex_card_body_server <- function(id, counter, res_fun) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      output$res <- shiny::renderText({
-        counter()  # this takes care of the invalidation
-        res_fun()()
-      })
+      res_fun <- res_fun |> shiny::bindEvent(counter())
+      output$res <- shiny::renderText({res_fun()()})
     }
   )
 }
