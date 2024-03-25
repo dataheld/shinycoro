@@ -1,0 +1,13 @@
+---
+ignored:
+  - DL3021  # spurious error on COPY --link
+  - SC1072  # R as shell
+  - DL3059  # multiple RUN
+  - SC2239  # shebaing issue
+  - DL3009  # ignore -rm -rf lists from apt-get
+  - DL4006  # ignore reminder to set pipefail
+  - DL3006  # allow untagged FROM, b/c of multicontext
+  - DL3008  # ignore warning to pin apt-get
+  - DL3045  # allow relative copy
+  - DL3024  # allow non-unique FROMs
+  - DL3013  # don't force pinning pip

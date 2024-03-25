@@ -1,0 +1,110 @@
+---
+name: CICD
+
+on:
+  push:
+
+concurrency:
+  group: ${{ github.ref }}
+  # main should run through entire queue of commits for debugging
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+
+jobs:
+  build-and-push-images:
+    name: "Build and Push Images"
+    # auth-ing to GHCR with same same user may cause problems
+    # run_id is a backup if token is undefined
+    concurrency: ${{ github.token || github.run_id }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: "linux/amd64, linux/arm64"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: v0.8.2
+          install: true
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          logout: false
+      - name: Extract Metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # image names and tags are actually defined in the bakefile
+          # TODO this should done by metadata-action,
+          # but is currently unsupported
+          images: "i-am-ignored"
+      - name: "Bake Images"
+        run: |
+          make bake \
+            bake_args="--file ${{ steps.meta.outputs.bake-file }}" \
+            tag_from_git_sha="${{ github.sha }}" \
+            git_ref_name="${{ github.ref_name }}"
+      - name: "Smoke Test Builder Image"
+        run: |
+          make smoke-test-builder git_ref_name="${{ github.ref_name }}"
+      - name: "Push Images"
+        run: |
+          make bake \
+            bake_args="--file ${{ steps.meta.outputs.bake-file }}" \
+            tag_from_git_sha="${{ github.sha }}" \
+            git_ref_name="${{ github.ref_name }}" \
+            can_push=true
+  make-all-in-docker:
+    name: "Test, Check, Lint and Document Package"
+    needs: [
+      build-and-push-images
+    ]
+    runs-on: ubuntu-20.04
+    container:
+      image: ghcr.io/${{ github.repository }}/builder:${{ github.sha }}
+    strategy:
+      fail-fast: false
+      matrix:
+        make_target: [
+          test,
+          check,
+          pkgdown,
+          rlint
+        ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Make ${{ matrix.make_target }}
+        run: make ${{ matrix.make_target }}
+      - name: Upload Pkgdown Website as an Artifact
+        if: ${{ matrix.make_target == 'pkgdown' }}
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "docs/"
+  lint-all:
+    name: Lint Code Base (Except R)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          # Full git history is needed to get a proper list of 
+          # changed files within `super-linter`
+          fetch-depth: 0
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          FILTER_REGEX_EXCLUDE: ^\/(.*?)(tests\/)(testthat\/)(_snaps\/)(.*?).md$
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: .
+          # for docs, see workflows repo
+          IGNORE_GITIGNORED_FILES: true
+          IGNORE_GENERATED_FILES: true
+          VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_R: false
+          VALIDATE_TERRAGRUNT: false

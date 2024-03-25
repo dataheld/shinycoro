@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+docs/
+NAMESPACE
+man/*.Rd
+!man/figures/
+~*.xlsx
+~*.xlsm
+# {shinytest2}: Ignore new debug snapshots for `$expect_values()`
+*_.new.png
+cache/

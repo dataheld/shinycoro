@@ -1,0 +1,44 @@
+---
+version: "3.9"
+
+services:
+  developer:
+    # use ghcr image when on CI, otherwise local image
+    image: ${REGISTRY_PREFIX}/${IMAGE_OWNER}/${IMAGE_NAME_ROOT}/developer:${TAG_FROM_GIT_REF_NAME:-latest}
+    volumes:
+      - .:/root/source
+      - .:/root/rstudio
+    command: R --vanilla --quiet
+  # this is to approximate super-linter on GHA
+  # for details, see 
+  # https://github.com/github/super-linter/blob/main/docs/run-linter-locally.md
+  # this is just static code analysis and does not actually need the runtime
+  rstudio:
+    image: ${REGISTRY_PREFIX}/${IMAGE_OWNER}/${IMAGE_NAME_ROOT}/rstudio:${TAG_FROM_GIT_REF_NAME:-latest}
+    volumes:
+      - .:/home/rstudio
+    environment:
+      - DISABLE_AUTH=true
+      - ROOT=true
+    ports:
+      - "127.0.0.1:8787:8787"
+      # vscode/codespaces do not like loopback ports
+      - "8789:8787"
+  runner:
+    image: ${REGISTRY_PREFIX}/${IMAGE_OWNER}/${IMAGE_NAME_ROOT}/runner:${TAG_FROM_GIT_REF_NAME:-latest}
+    ports:
+      - "0.0.0.0:3838:3838"
+      - "0.0.0.0:3840:3840"
+  super-linter:
+    image: github/super-linter:slim-v4
+    environment:
+      - RUN_LOCAL=true
+      # have to be the same as in cicd.yml
+      - LINTER_RULES_PATH=.
+      - IGNORE_GITIGNORED_FILES=true
+      - VALIDATE_NATURAL_LANGUAGE=false
+      - VALIDATE_R=false
+      - VALIDATE_TERRAGRUNT=false
+      - LOG_LEVEL=NOTICE
+    volumes:
+      - .:/tmp/lint

@@ -1,0 +1,17 @@
+.config
+.devcontainer/
+.git/
+.gitignore
+.github/workflows
+.radian_history
+.Rdata
+.RData
+.Rhistory
+docs/
+docker-bake.hcl
+.local/
+man/
+.vscode/
+NAMESPACE
+super-linter.log
+.Rprofile

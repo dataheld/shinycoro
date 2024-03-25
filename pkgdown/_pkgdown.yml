@@ -1,0 +1,12 @@
+---
+url: https://dataheld.github.io/shinycoro/
+
+home:
+  title: Persistent coroutines for shiny.
+
+authors:
+  Maximilian Held:
+    href: https://www.maxheld.de
+
+template:
+  bootstrap: 5
