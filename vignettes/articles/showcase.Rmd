@@ -1,0 +1,7 @@
+---
+title: "Showcase"
+---
+
+```{r app, echo=FALSE, message = FALSE}
+shinycoro:::include_app2()
+```
