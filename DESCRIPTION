@@ -16,9 +16,6 @@ License: MIT + file LICENSE
 URL: https://github.com/dataheld/shinycoro
 BugReports: https://github.com/dataheld/shinycoro/issues
 Imports:
-    coro,
-    shiny,
-    promises
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
