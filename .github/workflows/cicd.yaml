@@ -81,11 +81,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Make ${{ matrix.make_target }}
         run: make ${{ matrix.make_target }}
-      - name: Upload Pkgdown Website as an Artifact
-        if: ${{ matrix.make_target == 'pkgdown' }}
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "docs/"
   lint-all:
     name: Lint Code Base (Except R)
     runs-on: ubuntu-20.04
