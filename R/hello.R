@@ -28,7 +28,8 @@ hello_ui <- function() {
         choices = c(
           `Synchronous (shiny default)` = "sync",
           `Asynchronous (using promises)` = "async"
-        )
+        ),
+        selected = "async"
       ),
       shiny::actionButton("reload", label = "Invalidate"),
       bslib::value_box(
