@@ -31,5 +31,6 @@ Suggests:
     htmltools,
     purrr,
     rmarkdown,
+    reactlog,
     servr,
     testthat (>= 3.0.0)

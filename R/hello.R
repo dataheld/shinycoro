@@ -19,6 +19,7 @@ hello <- function() {
 #' @export
 hello_ui <- function() {
   require_namespace2("bslib")
+  require_namespace2("reactlog")
   bslib::page_sidebar(
     title = NULL,
     sidebar = bslib::sidebar(
@@ -37,7 +38,22 @@ hello_ui <- function() {
         value = shiny::textOutput("counter")
       )
     ),
-    ex_cards_ui("done")
+    bslib::card(
+      fill = FALSE,
+      bslib::card_header("Results"),
+      bslib::card_body(
+        bslib::layout_column_wrap(
+          width = 1/n_of_ex,
+          fill = FALSE,
+          !!!ex_cards_ui("done")
+        )
+      )
+    ),
+    bslib::card(
+      bslib::card_header("Reactive Log"),
+      bslib::card_body(reactlog::reactlog_module_ui()),
+      full_screen = TRUE
+    )
   )
 }
 
@@ -58,10 +74,11 @@ hello_server <- function(input, output, session) {
     counter = counter,
     res_fun = res_fun
   )
+  reactlog::reactlog_module_server()
   output$counter <- shiny::renderText(counter())
 }
 
-n_of_ex <- 4
+n_of_ex <- 3
 
 # slow funs ===
 
