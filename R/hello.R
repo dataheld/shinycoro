@@ -43,7 +43,7 @@ hello_ui <- function() {
       bslib::card_header("Results"),
       bslib::card_body(
         bslib::layout_column_wrap(
-          width = 1/n_of_ex,
+          width = 1 / n_of_ex,
           fill = FALSE,
           !!!ex_cards_ui("done")
         )
