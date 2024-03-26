@@ -166,7 +166,7 @@ ex_card_body_server <- function(id, counter, res_fun) {
     id = id,
     module = function(input, output, session) {
       res_fun <- res_fun |> shiny::bindEvent(counter())
-      output$res <- shiny::renderText({res_fun()()})
+      output$res <- shiny::renderText(res_fun()())
     }
   )
 }
