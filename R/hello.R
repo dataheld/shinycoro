@@ -18,8 +18,8 @@ hello <- function() {
 #' @describeIn hello UI
 #' @export
 hello_ui <- function() {
-  require_namespace2("bslib")
-  require_namespace2("reactlog")
+  rlang::check_installed("bslib")
+  rlang::check_installed("reactlog")
   bslib::page_sidebar(
     title = NULL,
     sidebar = bslib::sidebar(

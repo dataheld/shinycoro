@@ -55,21 +55,6 @@ options::define_options(
   shiny_port = 7798
 )
 
-#' Error out on unavailable optional pkgs
-#' @inheritParams requireNamespace
-#' @noRd
-require_namespace2 <- function(x) {
-  if (!requireNamespace(x, quietly = TRUE)) {
-    rlang::abort(
-      paste(
-        x,
-        "needed for this function to work.",
-        "Please install it."
-      )
-    )
-  }
-}
-
 #' Helper2 to stop if input is or is not a reactive
 #' @noRd
 abort_if_reactive <- function(x) {
