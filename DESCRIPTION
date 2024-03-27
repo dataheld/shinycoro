@@ -33,4 +33,5 @@ Suggests:
     rmarkdown,
     reactlog,
     servr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    profvis

@@ -15,6 +15,11 @@ hello <- function() {
   )
 }
 
+hello_pv <- function() {
+  rlang::check_installed("profvis")
+  profvis::profvis(shiny::runApp(hello()))
+}
+
 #' @describeIn hello UI
 #' @export
 hello_ui <- function() {
@@ -85,7 +90,8 @@ n_of_ex <- 3
 #' A slow function
 #' @export
 slow_fun <- function() {
-  Sys.sleep(2)
+  rlang::check_installed("profvis")
+  profvis::pause(2)
   "Done"
 }
 
