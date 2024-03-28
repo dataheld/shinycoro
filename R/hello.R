@@ -5,6 +5,7 @@
 #' @export
 hello <- function() {
   future::plan(future::multicore, workers = n_of_ex)
+  options(shiny.reactlog = TRUE)
   shiny::shinyApp(
     hello_ui(),
     hello_server,
