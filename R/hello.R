@@ -29,32 +29,7 @@ hello_ui <- function() {
   bslib::page_sidebar(
     title = NULL,
     sidebar = bslib::sidebar(
-      bslib::card(
-        popover_hover(
-          trigger = bslib::card_header("Setup"),
-          "Only applies to the long-running task."
-        ),
-        bslib::card_body(
-          shiny::radioButtons(
-            inputId = "order",
-            label = "Execution Order",
-            selected = "async",
-            choiceValues = c("sync", "async"),
-            choiceNames = list(
-              popover_hover(
-                trigger = "Synchronous",
-                "Shiny default behavior."
-              ),
-              popover_hover_md(
-                trigger = "Asynchronous",
-                "Reactives return *immediately* as promises.",
-                "Work in the same or other sessions can run in parallel.",
-                "But outputs are only refreshed when all promises are resolved."
-              )
-            )
-          )
-        )
-      ),
+      setup_async_ui("setup"),
       bslib::card(
         bslib::card_header("Long-Running Task"),
         bslib::card_body(
@@ -119,17 +94,11 @@ hello_ui <- function() {
 #' @export
 hello_server <- function(input, output, session) {
   counter <- shiny::reactive(input$run)
-  res_fun <- shiny::reactive({
-    switch(
-      input$order,
-      sync = slow_fun,
-      async = promisefy(slow_fun)
-    )
-  })
+  fun <- setup_async_server("setup")
   ex_cards_server(
     id = "done",
     counter = counter,
-    res_fun = res_fun
+    res_fun = fun
   )
   other_task_server("histo")
   reactlog::reactlog_module_server()
@@ -146,6 +115,63 @@ slow_fun <- function() {
   rlang::check_installed("profvis")
   profvis::pause(5)
   "Done"
+}
+
+# setup ====
+
+#' Setup of Async etc. for the long-running task
+#' @name setup_async
+NULL
+
+#' @describeIn setup_async Module UI
+#' @inheritParams shiny::NS
+#' @export
+setup_async_ui <- function(id) {
+  ns <- shiny::NS(id)
+  bslib::card(
+    popover_hover(
+      trigger = bslib::card_header("Setup"),
+      "Only applies to the long-running task."
+    ),
+    bslib::card_body(
+      shiny::radioButtons(
+        inputId = ns("order"),
+        label = "Execution Order",
+        selected = "async",
+        choiceValues = c("sync", "async"),
+        choiceNames = list(
+          popover_hover(
+            trigger = "Synchronous",
+            "Shiny default behavior."
+          ),
+          popover_hover_md(
+            trigger = "Asynchronous",
+            "Reactives return *immediately* as promises.",
+            "Work in the same or other sessions can run in parallel.",
+            "But outputs are only refreshed when all promises are resolved."
+          )
+        )
+      )
+    )
+  )
+}
+
+#' @describeIn setup_async Module Server
+#' @return The modified long-running function.
+#' @export
+setup_async_server <- function(id) {
+  shiny::moduleServer(
+    id = id,
+    module = function(input, output, session) {
+      shiny::reactive({
+        switch(
+          input$order,
+          sync = slow_fun,
+          async = promisefy(slow_fun)
+        )
+      })
+    }
+  )
 }
 
 # several examples ====
