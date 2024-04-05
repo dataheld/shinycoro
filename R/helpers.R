@@ -68,3 +68,15 @@ abort_if_not_reactive <- function(x) {
     rlang::abort("Input must be reactive.")
   }
 }
+
+#' Helper to default to hover tooltip
+#' @noRd
+popover_hover <- function(...) {
+  bslib::popover(
+    ...,
+    options = list(trigger = "hover")
+  )
+}
+popover_hover_md <- function(trigger, ...) {
+  popover_hover(trigger = trigger, shiny::markdown(mds = c(...)))
+}

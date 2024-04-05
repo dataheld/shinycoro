@@ -29,36 +29,85 @@ hello_ui <- function() {
   bslib::page_sidebar(
     title = NULL,
     sidebar = bslib::sidebar(
-      shiny::radioButtons(
-        inputId = "order",
-        label = "Execution Order",
-        choices = c(
-          `Synchronous (shiny default)` = "sync",
-          `Asynchronous (using promises)` = "async"
+      bslib::card(
+        popover_hover(
+          trigger = bslib::card_header("Setup"),
+          "Only applies to the long-running task."
         ),
-        selected = "async"
+        bslib::card_body(
+          shiny::radioButtons(
+            inputId = "order",
+            label = "Execution Order",
+            selected = "async",
+            choiceValues = c("sync", "async"),
+            choiceNames = list(
+              popover_hover(
+                trigger = "Synchronous",
+                "Shiny default behavior."
+              ),
+              popover_hover_md(
+                trigger = "Asynchronous",
+                "Reactives return *immediately* as promises.",
+                "Work in the same or other sessions can run in parallel.",
+                "But outputs are only refreshed when all promises are resolved."
+              )
+            )
+          )
+        )
       ),
-      shiny::actionButton("reload", label = "Invalidate"),
-      bslib::value_box(
-        title = "Run Counter",
-        value = shiny::textOutput("counter")
-      )
-    ),
-    bslib::card(
-      fill = FALSE,
-      bslib::card_header("Results"),
-      bslib::card_body(
-        bslib::layout_column_wrap(
-          width = 1 / n_of_ex,
-          fill = FALSE,
-          !!!ex_cards_ui("done")
+      bslib::card(
+        bslib::card_header("Long-Running Task"),
+        bslib::card_body(
+          shiny::radioButtons(
+            inputId = "fun",
+            label = "Function",
+            selected = "slow_fun",
+            choiceValues = c(
+              "slow_fun"
+            ),
+            choiceNames = list(
+              popover_hover_md(
+                # writing markdown here via markdown() is not possible,
+                # because it wraps in a p, not a span
+                trigger = shiny::HTML("<code>slow_fun()</code>"),
+                "Placeholder function for a long-running task.",
+                "Just pauses for 2 seconds."
+              )
+            )
+          )
+        ),
+        bslib::card_body(
+          bslib::input_task_button("run", label = "Run"),
+          bslib::value_box(
+            title = "Run Counter",
+            value = shiny::textOutput("counter")
+          )
         )
       )
     ),
-    bslib::card(
-      bslib::card_header("Reactive Log"),
-      bslib::card_body(reactlog::reactlog_module_ui()),
-      full_screen = TRUE
+    bslib::accordion(
+      bslib::accordion_panel(
+        title = "Results",
+        bslib::card(
+          bslib::card_header("Long-Running Task"),
+          bslib::card_body(
+            bslib::layout_column_wrap(
+              width = 1 / n_of_ex,
+              fill = FALSE,
+              !!!ex_cards_ui("done")
+            )
+          )
+        )
+      ),
+      bslib::accordion_panel(
+        title = "Diagnostics",
+        bslib::navset_underline(
+          bslib::nav_panel(
+            title = "Reactive Graph",
+            bslib::card(full_screen =  TRUE, reactlog::reactlog_module_ui())
+          )
+        )
+      )
     )
   )
 }
@@ -67,7 +116,7 @@ hello_ui <- function() {
 #' @param input,output,session See [shiny::shinyApp()].
 #' @export
 hello_server <- function(input, output, session) {
-  counter <- shiny::reactive(input$reload)
+  counter <- shiny::reactive(input$run)
   res_fun <- shiny::reactive({
     switch(
       input$order,
@@ -161,7 +210,7 @@ ex_card_server <- function(id, counter, res_fun) {
     module = function(input, output, session) {
       ex_card_body_server(id = "body", counter = counter, res_fun = res_fun)
       output$counter_this <- shiny::renderText({
-        paste("This is invalidation count", counter())
+        paste("This is run count", counter())
       })
     }
   )
