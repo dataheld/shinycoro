@@ -81,10 +81,7 @@ NULL
 setup_async_ui <- function(id) {
   ns <- shiny::NS(id)
   bslib::card(
-    popover_hover(
-      trigger = bslib::card_header("Setup"),
-      "Only applies to the long-running task."
-    ),
+    bslib::card_header("Setup for Long-Running Task"),
     bslib::card_body(
       shiny::radioButtons(
         inputId = ns("order"),
@@ -310,10 +307,7 @@ other_task_ui <- function(id) {
   ns <- shiny::NS(id)
   list(
     sidebar = bslib::card(
-      popover_hover(
-        trigger = bslib::card_header("Other Task"),
-        "Serves only to illustrate continued activity of other shiny elements."
-      ),
+      bslib::card_header("Other Task"),
       bslib::card_body(
         shiny::sliderInput(
           inputId = ns("decile"),
