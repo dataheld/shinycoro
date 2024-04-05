@@ -205,7 +205,7 @@ other_task_ui <- function(id) {
         "Serves only to illustrate continued activity of other shiny elements."
       ),
       bslib::card_body(
-         shiny::sliderInput(
+        shiny::sliderInput(
           inputId = ns("bins"),
           label = "Number of bins:",
           min = 1,
