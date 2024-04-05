@@ -32,51 +32,14 @@ hello_ui <- function() {
     title = NULL,
     sidebar = bslib::sidebar(
       setup_async_ui("setup"),
-      bslib::card(
-        bslib::card_header("Long-Running Task"),
-        bslib::card_body(
-          shiny::radioButtons(
-            inputId = "fun",
-            label = "Function",
-            selected = "slow_fun",
-            choiceValues = c(
-              "slow_fun"
-            ),
-            choiceNames = list(
-              popover_hover_md(
-                # writing markdown here via markdown() is not possible,
-                # because it wraps in a p, not a span
-                trigger = shiny::HTML("<code>slow_fun()</code>"),
-                "Placeholder function for a long-running task.",
-                "Just pauses for a few seconds."
-              )
-            )
-          )
-        ),
-        bslib::card_body(
-          bslib::input_task_button("run", label = "Run"),
-          bslib::value_box(
-            title = "Run Counter",
-            value = shiny::textOutput("counter")
-          )
-        )
-      ),
-      other_task_ui("histo")[["input"]]
+      long_task_ui("long")[["sidebar"]],
+      other_task_ui("other")[["sidebar"]]
     ),
     bslib::accordion(
       bslib::accordion_panel(
         title = "Results",
-        bslib::card(
-          bslib::card_header("Long-Running Task"),
-          bslib::card_body(
-            bslib::layout_column_wrap(
-              width = 1 / n_of_ex,
-              fill = FALSE,
-              !!!ex_cards_ui("done")
-            )
-          )
-        ),
-        other_task_ui("histo")[["output"]]
+        long_task_ui("long")[["main"]],
+        other_task_ui("other")[["main"]]
       ),
       bslib::accordion_panel(
         title = "Diagnostics",
@@ -95,16 +58,10 @@ hello_ui <- function() {
 #' @param input,output,session See [shiny::shinyApp()].
 #' @export
 hello_server <- function(input, output, session) {
-  counter <- shiny::reactive(input$run)
   fun <- setup_async_server("setup")
-  ex_cards_server(
-    id = "done",
-    counter = counter,
-    res_fun = fun
-  )
-  other_task_server("histo")
+  long_task_server("long", fun = fun)
+  other_task_server("other")
   reactlog::reactlog_module_server()
-  output$counter <- shiny::renderText(counter())
 }
 
 # slow funs ====
@@ -113,7 +70,7 @@ hello_server <- function(input, output, session) {
 #' @export
 slow_fun <- function() {
   rlang::check_installed("profvis")
-  profvis::pause(5)
+  profvis::pause(3)
   "Done"
 }
 
@@ -174,6 +131,74 @@ setup_async_server <- function(id) {
   )
 }
 
+# long task ====
+
+#' Example of a Long Task
+#' @name long_task
+NULL
+
+#' @describeIn long_task Module UI
+#' @inheritParams shiny::NS
+#' @export
+long_task_ui <- function(id) {
+  ns <- shiny::NS(id)
+  list(
+    sidebar = bslib::card(
+      bslib::card_header("Long-Running Task"),
+      bslib::card_body(
+        shiny::radioButtons(
+          inputId = ns("fun"),
+          label = "Function",
+          selected = "slow_fun",
+          choiceValues = c(
+            "slow_fun"
+          ),
+          choiceNames = list(
+            popover_hover_md(
+              # writing markdown here via markdown() is not possible,
+              # because it wraps in a p, not a span
+              trigger = shiny::HTML("<code>slow_fun()</code>"),
+              "Placeholder function for a long-running task.",
+              "Just pauses for a few seconds."
+            )
+          )
+        )
+      ),
+      bslib::card_body(
+        bslib::input_task_button(ns("run"), label = "Run"),
+        bslib::value_box(
+          title = "Run Counter",
+          value = shiny::textOutput(ns("counter"))
+        )
+      )
+    ),
+    main = bslib::card(
+      bslib::card_header("Long-Running Task"),
+      bslib::card_body(
+        bslib::layout_column_wrap(
+          width = 1 / n_of_ex,
+          fill = FALSE,
+          !!!ex_cards_ui(ns("done"))
+        )
+      )
+    )
+  )
+}
+
+#' @describeIn long_task Module Server
+#' @inheritParams ex_cards_server
+#' @export
+long_task_server <- function(id, fun) {
+  shiny::moduleServer(
+    id = id,
+    module = function(input, output, session) {
+      counter <- shiny::reactive(input$run)
+      ex_cards_server("done", counter = counter, fun = fun)
+      output$counter <- shiny::renderText(counter())
+    }
+  )
+}
+
 # several examples ====
 
 #' Example Cards
@@ -195,16 +220,16 @@ ex_cards_ui <- function(id) {
 
 #' @describeIn ex_cards Module Server
 #' @param counter A reactive giving the current counter run (integer).
-#' @param res_fun A (slow) function to calculate each of the results.
+#' @param fun A (slow) function to calculate each of the results.
 #' @export
-ex_cards_server <- function(id, counter, res_fun) {
+ex_cards_server <- function(id, counter, fun) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
       purrr::map(
         letters[1:n_of_ex],
         function(x) {
-          ex_card_server(id = x, counter = counter, res_fun = res_fun)
+          ex_card_server(id = x, counter = counter, fun = fun)
         }
       )
     }
@@ -233,12 +258,12 @@ ex_card_ui <- function(id) {
 #' @describeIn ex_card Module Server
 #' @inheritParams ex_cards_server
 #' @export
-ex_card_server <- function(id, counter, res_fun) {
+ex_card_server <- function(id, counter, fun) {
   abort_if_not_reactive(counter)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      ex_card_body_server(id = "body", counter = counter, res_fun = res_fun)
+      ex_card_body_server("body", counter = counter, fun = fun)
       output$counter_this <- shiny::renderText({
         paste("This is run count", counter())
       })
@@ -263,14 +288,14 @@ ex_card_body_ui <- function(id) {
 #' @describeIn ex_card_body Module Server
 #' @inheritParams ex_cards_server
 #' @export
-ex_card_body_server <- function(id, counter, res_fun) {
+ex_card_body_server <- function(id, counter, fun) {
   abort_if_not_reactive(counter)
-  abort_if_not_reactive(res_fun)
+  abort_if_not_reactive(fun)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      res_fun <- res_fun |> shiny::bindEvent(counter())
-      output$res <- shiny::renderText(res_fun()())
+      fun <- fun |> shiny::bindEvent(counter())
+      output$res <- shiny::renderText(fun()())
     }
   )
 }
@@ -289,7 +314,7 @@ NULL
 other_task_ui <- function(id) {
   ns <- shiny::NS(id)
   list(
-    input = bslib::card(
+    sidebar = bslib::card(
       popover_hover(
         trigger = bslib::card_header("Other Task"),
         "Serves only to illustrate continued activity of other shiny elements."
@@ -304,7 +329,7 @@ other_task_ui <- function(id) {
         )
       )
     ),
-    output = bslib::card(
+    main = bslib::card(
       bslib::card_header("Other Task"),
       bslib::card_body(shiny::plotOutput(outputId = ns("dist_plot")))
     )
