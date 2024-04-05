@@ -71,7 +71,7 @@ hello_ui <- function() {
                 # because it wraps in a p, not a span
                 trigger = shiny::HTML("<code>slow_fun()</code>"),
                 "Placeholder function for a long-running task.",
-                "Just pauses for 2 seconds."
+                "Just pauses for a few seconds."
               )
             )
           )
@@ -83,7 +83,8 @@ hello_ui <- function() {
             value = shiny::textOutput("counter")
           )
         )
-      )
+      ),
+      other_task_ui("histo")[["input"]]
     ),
     bslib::accordion(
       bslib::accordion_panel(
@@ -97,7 +98,8 @@ hello_ui <- function() {
               !!!ex_cards_ui("done")
             )
           )
-        )
+        ),
+        other_task_ui("histo")[["output"]]
       ),
       bslib::accordion_panel(
         title = "Diagnostics",
@@ -129,6 +131,7 @@ hello_server <- function(input, output, session) {
     counter = counter,
     res_fun = res_fun
   )
+  other_task_server("histo")
   reactlog::reactlog_module_server()
   output$counter <- shiny::renderText(counter())
 }
@@ -141,7 +144,7 @@ n_of_ex <- 3
 #' @export
 slow_fun <- function() {
   rlang::check_installed("profvis")
-  profvis::pause(2)
+  profvis::pause(5)
   "Done"
 }
 
@@ -178,6 +181,64 @@ ex_cards_server <- function(id, counter, res_fun) {
           ex_card_server(id = x, counter = counter, res_fun = res_fun)
         }
       )
+    }
+  )
+}
+
+# other task ====
+
+#' Example of Another Task
+#'
+#' Based on shiny example.
+#' @name other_task
+NULL
+
+#' @describeIn other_task Module UI
+#' @inheritParams shiny::NS
+#' @export
+other_task_ui <- function(id) {
+  ns <- shiny::NS(id)
+  list(
+    input = bslib::card(
+      popover_hover(
+        trigger = bslib::card_header("Other Task"),
+        "Serves only to illustrate continued activity of other shiny elements."
+      ),
+      bslib::card_body(
+         shiny::sliderInput(
+          inputId = ns("bins"),
+          label = "Number of bins:",
+          min = 1,
+          max = 50,
+          value = 30
+        )
+      )
+    ),
+    output = bslib::card(
+      bslib::card_header("Other Task"),
+      bslib::card_body(shiny::plotOutput(outputId = ns("dist_plot")))
+    )
+  )
+}
+
+#' @describeIn other_task Module Server
+#' @export
+other_task_server <-  function(id) {
+  shiny::moduleServer(
+    id = id,
+    module = function(input, output, session) {
+      output$dist_plot <- shiny::renderPlot({
+        x <- datasets::faithful$waiting
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        graphics::hist(
+          x,
+          breaks = bins,
+          col = "#007bc2",
+          border = "white",
+          xlab = "Waiting time to next eruption (in mins)",
+          main = "Histogram of waiting times"
+        )
+      })
     }
   )
 }
