@@ -321,17 +321,22 @@ other_task_ui <- function(id) {
       ),
       bslib::card_body(
         shiny::sliderInput(
-          inputId = ns("bins"),
-          label = "Number of bins:",
+          inputId = ns("decile"),
+          label = "Decile",
           min = 1,
-          max = 50,
-          value = 30
+          max = 10,
+          value = 3
         )
       )
     ),
     main = bslib::card(
       bslib::card_header("Other Task"),
-      bslib::card_body(shiny::plotOutput(outputId = ns("dist_plot")))
+      bslib::card_body(
+        bslib::value_box(
+          title = "Next Volcanic Eruption in",
+          value = shiny::textOutput(ns("time_2_erupt"))
+        )
+      )
     )
   )
 }
@@ -342,17 +347,9 @@ other_task_server <-  function(id) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      output$dist_plot <- shiny::renderPlot({
+      output$time_2_erupt <- shiny::renderText({
         x <- datasets::faithful$waiting
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-        graphics::hist(
-          x,
-          breaks = bins,
-          col = "#007bc2",
-          border = "white",
-          xlab = "Waiting time to next eruption (in mins)",
-          main = "Histogram of waiting times"
-        )
+        paste(quantile(x, probs = seq(0, 1, by = .1))[input$decile], "Years")
       })
     }
   )
