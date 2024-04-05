@@ -116,7 +116,7 @@ setup_async_server <- function(id) {
         switch(
           input$order,
           sync = slow_fun,
-          async = promisefy(slow_fun)
+          async = asyncify(slow_fun),
         )
       })
     }

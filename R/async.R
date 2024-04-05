@@ -1,4 +1,4 @@
-promisefy <- function(.f) {
+asyncify <- function(.f) {
   function() {
     promises::then(
       promises::future_promise(.f()),
