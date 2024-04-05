@@ -43,12 +43,7 @@ hello_ui <- function() {
       ),
       bslib::accordion_panel(
         title = "Diagnostics",
-        bslib::navset_underline(
-          bslib::nav_panel(
-            title = "Reactive Graph",
-            bslib::card(full_screen =  TRUE, reactlog::reactlog_module_ui())
-          )
-        )
+        diagnostics_ui("diagnostics")
       )
     )
   )
@@ -61,7 +56,7 @@ hello_server <- function(input, output, session) {
   fun <- setup_async_server("setup")
   long_task_server("long", fun = fun)
   other_task_server("other")
-  reactlog::reactlog_module_server()
+  diagnostics_server("diagnostics")
 }
 
 # slow funs ====
@@ -349,8 +344,44 @@ other_task_server <-  function(id) {
     module = function(input, output, session) {
       output$time_2_erupt <- shiny::renderText({
         x <- datasets::faithful$waiting
-        paste(quantile(x, probs = seq(0, 1, by = .1))[input$decile], "Years")
+        paste(
+          stats::quantile(x, probs = seq(0, 1, by = .1))[input$decile],
+          "Years"
+        )
       })
+    }
+  )
+}
+
+# diagnostics ====
+
+#' Show Diagnostics in Shiny App
+#' @name diagnostics
+NULL
+
+#' @describeIn diagnostics Module UI
+#' @inheritParams shiny::NS
+#' @export
+diagnostics_ui <- function(id) {
+  ns <- shiny::NS(id)
+  bslib::navset_underline(
+    bslib::nav_panel(
+      title = "Reactive Graph",
+      bslib::card(
+        full_screen =  TRUE,
+        reactlog::reactlog_module_ui(id = ns("reactlog"))
+      )
+    )
+  )
+}
+
+#' @describeIn diagnostics Module Server
+#' @export
+diagnostics_server <- function(id) {
+  shiny::moduleServer(
+    id = id,
+    module = function(input, output, session) {
+      reactlog::reactlog_module_server(id = "reactlog")
     }
   )
 }
