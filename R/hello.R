@@ -353,7 +353,7 @@ other_task_ui <- function(id) {
 
 #' @describeIn other_task Module Server
 #' @export
-other_task_server <-  function(id) {
+other_task_server <- function(id) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
@@ -383,7 +383,7 @@ diagnostics_ui <- function(id) {
     bslib::nav_panel(
       title = "Reactive Graph",
       bslib::card(
-        full_screen =  TRUE,
+        full_screen = TRUE,
         reactlog::reactlog_module_ui(id = ns("reactlog"))
       )
     )
