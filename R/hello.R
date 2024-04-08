@@ -86,8 +86,8 @@ setup_async_ui <- function(id) {
       shiny::radioButtons(
         inputId = ns("order"),
         label = "Execution Order",
-        selected = "async",
-        choiceValues = c("sync", "async"),
+        selected = "sync",
+        choiceValues = c("sync", "async", "background"),
         choiceNames = list(
           popover_hover(
             trigger = "Synchronous",
@@ -98,6 +98,13 @@ setup_async_ui <- function(id) {
             "Reactives return *immediately* as promises.",
             "Work in the same or other sessions can run in parallel.",
             "But outputs are only refreshed when all promises are resolved."
+          ),
+          popover_hover_md(
+            trigger = "Asynchronous & Background",
+            "In addition to the advantages of asynchronous,",
+            "`ExtendedTask` unblocks the *current* session.",
+            "Results are returned *as soon as they are ready*,",
+            "and other interactions can be done in the meantime."
           )
         )
       )
@@ -117,6 +124,7 @@ setup_async_server <- function(id) {
           input$order,
           sync = slow_fun,
           async = asyncify(slow_fun),
+          background = asyncify(slow_fun)
         )
       })
     }
