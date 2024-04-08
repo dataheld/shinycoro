@@ -125,8 +125,7 @@ setup_async_server <- function(id) {
     id = id,
     module = function(input, output, session) {
       shiny::reactive({
-        switch(
-          input$order,
+        switch(input$order,
           sync = slow_fun,
           async = asyncify(slow_fun),
           background = asyncify(slow_fun)
