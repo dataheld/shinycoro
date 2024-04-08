@@ -1,8 +1,3 @@
 asyncify <- function(.f) {
-  function(...) {
-    promises::then(
-      promises::future_promise(.f(...), seed = NULL),
-      onFulfilled = function(value) value
-    )
-  }
+  function(...) promises::future_promise(.f(...), seed = NULL)
 }
