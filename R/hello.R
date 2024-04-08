@@ -62,11 +62,16 @@ hello_server <- function(input, output, session) {
 # slow funs ====
 
 #' A slow function
+#' @param seed
+#' Scalar integer to be used by the slow function.
+#' This is a placeholder variable used for invalidation.
 #' @export
-slow_fun <- function() {
+slow_fun <- function(seed = 1) {
   rlang::check_installed("profvis")
-  profvis::pause(3)
-  "Done"
+  withr::local_seed(seed = seed)
+  sleep_time <- runif(1, 2, 5)
+  profvis::pause(sleep_time)
+  paste("Done based on seed", seed)
 }
 
 # setup ====
@@ -162,14 +167,18 @@ long_task_ui <- function(id) {
               "Just pauses for a few seconds."
             )
           )
-        )
-      ),
-      bslib::card_body(
-        bslib::input_task_button(ns("run"), label = "Run"),
-        bslib::value_box(
-          title = "Run Counter",
-          value = shiny::textOutput(ns("counter"))
-        )
+        ),
+        popover_hover_md(
+          trigger = shiny::numericInput(
+            inputId = ns("seed"),
+            label = "Seed",
+            value = 1
+          ),
+          "This input is a placeholder input.",
+          "The long-running task only uses this in its return,",
+          "thereby creating a reactive depencency on it."
+        ),
+        bslib::input_task_button(ns("run"), label = "Run")
       )
     ),
     main = bslib::card(
@@ -193,8 +202,8 @@ long_task_server <- function(id, fun) {
     id = id,
     module = function(input, output, session) {
       counter <- shiny::reactive(input$run)
-      ex_cards_server("done", counter = counter, fun = fun)
-      output$counter <- shiny::renderText(counter())
+      seed <- shiny::reactive(input$seed)
+      ex_cards_server("done", counter = counter, fun = fun, seed = seed)
     }
   )
 }
@@ -221,15 +230,16 @@ ex_cards_ui <- function(id) {
 #' @describeIn ex_cards Module Server
 #' @param counter A reactive giving the current counter run (integer).
 #' @param fun A (slow) function to calculate each of the results.
+#' @inheritParams slow_fun
 #' @export
-ex_cards_server <- function(id, counter, fun) {
+ex_cards_server <- function(id, counter, fun, seed) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
       purrr::map(
         letters[1:n_of_ex],
         function(x) {
-          ex_card_server(id = x, counter = counter, fun = fun)
+          ex_card_server(id = x, counter = counter, fun = fun, seed = seed)
         }
       )
     }
@@ -258,12 +268,12 @@ ex_card_ui <- function(id) {
 #' @describeIn ex_card Module Server
 #' @inheritParams ex_cards_server
 #' @export
-ex_card_server <- function(id, counter, fun) {
+ex_card_server <- function(id, counter, fun, seed) {
   abort_if_not_reactive(counter)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      ex_card_body_server("body", counter = counter, fun = fun)
+      ex_card_body_server("body", counter = counter, fun = fun, seed = seed)
       output$counter_this <- shiny::renderText({
         paste("This is run count", counter())
       })
@@ -288,14 +298,17 @@ ex_card_body_ui <- function(id) {
 #' @describeIn ex_card_body Module Server
 #' @inheritParams ex_cards_server
 #' @export
-ex_card_body_server <- function(id, counter, fun) {
+ex_card_body_server <- function(id, counter, fun, seed) {
   abort_if_not_reactive(counter)
   abort_if_not_reactive(fun)
+  abort_if_not_reactive(seed)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      fun <- fun |> shiny::bindEvent(counter())
-      output$res <- shiny::renderText(fun()())
+      res <- shiny::reactive(fun()(shiny::isolate(seed()))) |>
+        shiny::bindCache(seed()) |>
+        shiny::bindEvent(counter())
+      output$res <- shiny::renderText(res())
     }
   )
 }
