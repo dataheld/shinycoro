@@ -70,7 +70,9 @@ hello_server <- function(input, output, session) {
 slow_fun <- function(seed = 1) {
   rlang::check_installed("profvis")
   rlang::check_installed("withr")
-  withr::local_seed(seed = seed)
+  # just to ensure invalidation
+  withr::with_seed(seed = seed, code = {})
+  # these are *actually* random and do not use the seed!
   sleep_time <- stats::runif(1, 2, 5)
   profvis::pause(sleep_time)
   paste("Done based on seed", seed)
@@ -256,12 +258,11 @@ ex_cards_server <- function(id, counter, fun, seed) {
       purrr::imap(
         examples,
         function(x, y) {
-          seed_plus_index <- shiny::reactive(seed() + x)
           ex_card_server(
             id = y,
             counter = counter,
             fun = fun,
-            seed = seed_plus_index
+            seed = seed
           )
         }
       )
