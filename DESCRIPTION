@@ -21,12 +21,7 @@ Imports:
     options,
     promises,
     rlang,
-    shiny
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-Config/testthat/edition: 3
-Suggests:
+    shiny,
     bslib,
     htmltools,
     purrr,
@@ -36,3 +31,7 @@ Suggests:
     testthat (>= 3.0.0),
     profvis,
     withr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3
