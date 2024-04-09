@@ -68,8 +68,9 @@ hello_server <- function(input, output, session) {
 #' @export
 slow_fun <- function(seed = 1) {
   rlang::check_installed("profvis")
+  rlang::check_installed("withr")
   withr::local_seed(seed = seed)
-  sleep_time <- runif(1, 2, 5)
+  sleep_time <- stats::runif(1, 2, 5)
   profvis::pause(sleep_time)
   paste("Done based on seed", seed)
 }
