@@ -25,12 +25,15 @@ Imports:
     bslib,
     htmltools,
     purrr,
-    rmarkdown,
     reactlog,
-    servr,
-    testthat (>= 3.0.0),
     profvis,
-    withr
+    withr,
+    memoise,
+    fs
+Suggests:
+    rmarkdown,
+    servr,
+    testthat
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

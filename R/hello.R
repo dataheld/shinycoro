@@ -114,6 +114,15 @@ setup_async_ui <- function(id) {
             "and other interactions can be done in the meantime."
           )
         )
+      ),
+      popover_hover(
+        trigger = shiny::checkboxInput(
+          inputId = ns("cache"),
+          label = "Cache",
+          value = FALSE
+        ),
+        "Caching results in shiny session.",
+        "Repeated runs with the same seed will return instantaneously."
       )
     )
   )
@@ -126,11 +135,22 @@ setup_async_server <- function(id) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
+      cache <- memoise::cache_filesystem(fs::path_temp())
+      fun_mem <- shiny::reactive({
+        if (input$cache) {
+          memoise::memoise(slow_fun, cache = cache)
+        } else {
+          slow_fun
+        }
+      })
       shiny::reactive({
         switch(input$order,
-          sync = slow_fun,
-          async = asyncify(slow_fun),
-          background = backgroundify(asyncify(slow_fun))
+          sync = fun_mem(),
+          async = asyncify(fun_mem()),
+          background = backgroundify(
+            # // TODO let backgroundify deal with reactives #13
+            asyncify(memoise::memoise(slow_fun, cache = cache))
+          )
         )
       })
     }
@@ -322,7 +342,6 @@ ex_card_body_server <- function(id, counter, fun, seed) {
           fun()(shiny::isolate(seed()))
         }
       }) |>
-        shiny::bindCache(seed()) |>
         shiny::bindEvent(counter())
       output$res <- shiny::renderText({
         if (is_background_function(fun())) {
