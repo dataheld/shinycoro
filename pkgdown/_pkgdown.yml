@@ -2,7 +2,7 @@
 url: https://dataheld.github.io/shinycoro/
 
 home:
-  title: Persistent coroutines for shiny.
+  title: Persistent coroutsines for shiny.
 
 authors:
   Maximilian Held:
@@ -10,3 +10,12 @@ authors:
 
 template:
   bootstrap: 5
+
+navbar:
+  structure:
+    left: [home, reference, app]
+  components:
+    app:
+      text: Showcase
+      icon: "fa fa-tachometer"
+      href: articles/showcase.html

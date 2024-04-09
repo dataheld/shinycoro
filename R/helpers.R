@@ -21,7 +21,7 @@ system_file2 <- function(...) {
 include_app2 <- function() {
   htmltools::tags$div(
     htmltools::tags$iframe(
-      src = build_url_shiny(),
+      src = "https://maxheld83.shinyapps.io/shinycoro/",
       height = "100%",
       width = "100%",
       name = "app"
