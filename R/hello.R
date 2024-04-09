@@ -1,12 +1,13 @@
 # test app ====
 
 n_of_ex <- 3
+examples <- rlang::set_names(1:n_of_ex, letters[1:n_of_ex])
 
 #' Example App to Illustrate Async Patterns
 #'
 #' @export
 hello <- function() {
-  future::plan(future::multicore, workers = n_of_ex)
+  future::plan(future::multicore, workers = length(examples))
   options(shiny.reactlog = TRUE)
   shiny::shinyApp(
     hello_ui(),
@@ -129,7 +130,7 @@ setup_async_server <- function(id) {
         switch(input$order,
           sync = slow_fun,
           async = asyncify(slow_fun),
-          background = asyncify(slow_fun)
+          background = backgroundify(asyncify(slow_fun))
         )
       })
     }
@@ -185,7 +186,7 @@ long_task_ui <- function(id) {
       bslib::card_header("Long-Running Task"),
       bslib::card_body(
         bslib::layout_column_wrap(
-          width = 1 / n_of_ex,
+          width = 1 / length(examples),
           fill = FALSE,
           !!!ex_cards_ui(ns("done"))
         )
@@ -219,12 +220,8 @@ NULL
 #' @export
 ex_cards_ui <- function(id) {
   ns <- shiny::NS(id)
-  purrr::map(
-    letters[1:n_of_ex],
-    function(x) {
-      ex_card_ui(ns(x))
-    }
-  )
+  purrr::imap(examples, function(x, y) ex_card_ui(ns(y))) |>
+    unname() # shiny tag list elements must not be named
 }
 
 #' @describeIn ex_cards Module Server
@@ -236,10 +233,16 @@ ex_cards_server <- function(id, counter, fun, seed) {
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      purrr::map(
-        letters[1:n_of_ex],
-        function(x) {
-          ex_card_server(id = x, counter = counter, fun = fun, seed = seed)
+      purrr::imap(
+        examples,
+        function(x, y) {
+          seed_plus_index <- shiny::reactive(seed() + x)
+          ex_card_server(
+            id = y,
+            counter = counter,
+            fun = fun,
+            seed = seed_plus_index
+          )
         }
       )
     }
@@ -302,13 +305,32 @@ ex_card_body_server <- function(id, counter, fun, seed) {
   abort_if_not_reactive(counter)
   abort_if_not_reactive(fun)
   abort_if_not_reactive(seed)
+  # should (?) be *created* outside of reactive context,
+  # but needs to be one per module instance
+  extended_task <- shiny::ExtendedTask$new(rlang::exec)
   shiny::moduleServer(
     id = id,
     module = function(input, output, session) {
-      res <- shiny::reactive(fun()(shiny::isolate(seed()))) |>
+      shiny::observe({
+        if (is_background_function(fun())) {
+          extended_task$invoke(.fn = fun(), shiny::isolate(seed()))
+        }
+      }) |>
+        shiny::bindEvent(counter())
+      res <- shiny::reactive({
+        if (!is_background_function(fun())) {
+          fun()(shiny::isolate(seed()))
+        }
+      }) |>
         shiny::bindCache(seed()) |>
         shiny::bindEvent(counter())
-      output$res <- shiny::renderText(res())
+      output$res <- shiny::renderText({
+        if (is_background_function(fun())) {
+          extended_task$result()
+        } else {
+          res()
+        }
+      })
     }
   )
 }
