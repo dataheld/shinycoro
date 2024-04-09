@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 docs/
-NAMESPACE
 man/*.Rd
 !man/figures/
 ~*.xlsx
