@@ -212,3 +212,7 @@ sql-lint:
 
 yamllint:
 	yamllint .
+
+deploy-saio:
+	Rscript -e "remotes::install_github('dataheld/shinycoro', dependencies = TRUE)"
+	Rscript -e "rsconnect::deployApp(appDir = 'inst/app', appPrimaryDoc = 'hello.R', appName = 'shinycoro', forceUpdate = TRUE, logLevel = 'verbose')"
