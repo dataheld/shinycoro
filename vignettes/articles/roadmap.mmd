@@ -1,0 +1,50 @@
+flowchart TB;
+  start("Legacy Shiny App")
+  start -- benchmark --> perf
+  perf{"Measure \n Performance"}
+  perf -- refactor --> modules
+  modules{"Namespace isolation \n via modules"}
+  modules -- test --> tdd
+  tdd{"Write Tests"}
+  tdd --> promises
+  tdd --> eval-late
+  tdd --> cached
+  subgraph Async ["Execution Order"];
+    direction TB
+    style Async fill:#f9f
+    promises{"Long reactives return \n immediately as promises \n 📦 #2, 🗓️ 2-3 d"}
+    promises -- parallelize --> future
+    future{"Long tasks get \n run in several workers"}
+    future -- backgroundify --> extendedTask
+    extendedTask{"Long reactives \n run in background \n UI refreshes as they finish \n 📦 #5, 🗓️ 2-3 d"}
+  end
+  future -. may crash without .-> coro
+  subgraph StatefulRes ["Managing Stateful Resources"];
+    direction TB
+    eval-late{"Produce 'requests' early, \n evaluate them later \n 📦 #4, 🗓️ 2-3 d (migrate to httr2)"}
+    eval-late -- coroutinify --> coro
+    coro{"Manage resource state and \n evaluation queue centrally \n 📦 #3, 🗓️ 2-3 d"}
+    coro -- multi-thread --> nativePara
+    nativePara{"Leverage native parallelisation \n (e.g. httr2)"}
+  end
+  tdd --> bslib
+  subgraph UI ["User Interface"];
+    direction TB
+    bslib{"Migrate to bslib \n Bootstrap >=5 \n 📦 #8, 🗓️ 4 d"}
+    bslib -- refactor --> stateReact
+    stateReact{"Immediately return \n state reactives from modules \n 📦 #8, 🗓️ 3 d"}
+    stateReact -- bind events --> stateUI
+    stateUI{"Reveal state of \n long-running reactives \n to user \n 📦 #8, 🗓️ 2 d"}
+    extendedTask -. enables .-> stateUI
+  end
+  subgraph Cache ["Caching Responses"];
+    direction TB
+    cached{"Cache long-running \n functions \n 📦 #7, 🗓️ 4 d"}
+    cached -- centralize --> cacheShared{"Shared Cache"}
+    cacheShared -- prefetch --> prefetchedCache{"Fetch likely responses \n before user"}
+  end
+  stateUI --> highPerf
+  highPerf{"Responsive Shiny App"}
+  nativePara --> highPerf
+  extendedTask --> highPerf
+  prefetchedCache --> highPerf
