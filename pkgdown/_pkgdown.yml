@@ -10,12 +10,3 @@ authors:
 
 template:
   bootstrap: 5
-
-navbar:
-  structure:
-    left: [home, reference, app]
-  components:
-    app:
-      text: Showcase
-      icon: "fa fa-tachometer"
-      href: articles/showcase.html

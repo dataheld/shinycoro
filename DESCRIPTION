@@ -23,7 +23,6 @@ Imports:
     rlang,
     shiny,
     bslib,
-    htmltools,
     purrr,
     reactlog,
     profvis,
@@ -31,7 +30,6 @@ Imports:
     memoise,
     fs
 Suggests:
-    rmarkdown,
     servr,
     testthat
 Encoding: UTF-8
