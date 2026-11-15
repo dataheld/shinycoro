@@ -1,13 +1,3 @@
-build_url_shiny <- function() {
-  httr2::url_build(
-    list(
-      scheme = "http",
-      hostname = options::opt("shiny_hostname"),
-      port = options::opt("shiny_port")
-    )
-  )
-}
-
 options::define_options(
   "Shiny hostname for test app",
   shiny_hostname = "localhost"
@@ -17,14 +7,8 @@ options::define_options(
   shiny_port = 7798
 )
 
-#' Helper2 to stop if input is or is not a reactive
+#' Helper to stop if input is not a reactive
 #' @noRd
-abort_if_reactive <- function(x) {
-  if (shiny::is.reactive(x)) {
-    rlang::abort("Input must not be reactive.")
-  }
-}
-
 abort_if_not_reactive <- function(x) {
   if (!shiny::is.reactive(x)) {
     rlang::abort("Input must be reactive.")

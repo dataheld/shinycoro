@@ -19,6 +19,7 @@ hello <- function() {
   )
 }
 
+# jarl-ignore unused_function: for interactive profiling
 hello_pv <- function() {
   rlang::check_installed("profvis")
   profvis::profvis(shiny::runApp(hello()))

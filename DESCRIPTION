@@ -17,7 +17,6 @@ URL: https://github.com/dataheld/shinycoro, https://shinycoro.maxheld.de
 BugReports: https://github.com/dataheld/shinycoro/issues
 Imports:
     future,
-    httr2,
     options,
     promises,
     rlang,
@@ -36,3 +35,4 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/Needs/development: devtools, servr, usethis
+RoxygenNote: 7.3.3
