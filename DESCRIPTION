@@ -13,7 +13,7 @@ Authors@R:
     )
 Description: Hand off long-running tasks to a coroutine in the background.
 License: MIT + file LICENSE
-URL: https://github.com/dataheld/shinycoro
+URL: https://github.com/dataheld/shinycoro, https://shinycoro.maxheld.de
 BugReports: https://github.com/dataheld/shinycoro/issues
 Imports:
     future,
