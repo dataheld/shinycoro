@@ -1,12 +1,8 @@
----
 url: https://shinycoro.maxheld.de
-
 home:
-  title: Persistent coroutsines for shiny.
-
+  title: Persistent coroutines for shiny.
 authors:
   Maximilian Held:
     href: https://www.maxheld.de
-
 template:
   bootstrap: 5

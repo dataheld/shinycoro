@@ -11,7 +11,7 @@
       "type": "deps",
       "direct": true,
       "binary": false,
-      "dependencies": ["future", "httr2", "options", "promises", "rlang", "shiny", "bslib", "purrr", "reactlog", "profvis", "withr", "memoise", "fs"],
+      "dependencies": ["future", "options", "promises", "rlang", "shiny", "bslib", "purrr", "reactlog", "profvis", "withr", "memoise", "fs"],
       "vignettes": false,
       "metadata": {
         "RemotePkgRef": "deps::.",
