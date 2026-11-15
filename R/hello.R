@@ -19,6 +19,7 @@ hello <- function() {
   )
 }
 
+# jarl-ignore unused_function: for interactive profiling
 hello_pv <- function() {
   rlang::check_installed("profvis")
   profvis::profvis(shiny::runApp(hello()))
@@ -146,7 +147,8 @@ setup_async_server <- function(id) {
         }
       })
       shiny::reactive({
-        switch(input$order,
+        switch(
+          input$order,
           sync = fun_mem(),
           async = asyncify(fun_mem()),
           background = backgroundify(
@@ -199,7 +201,7 @@ long_task_ui <- function(id) {
           ),
           "This input is a placeholder input.",
           "The long-running task only uses this in its return,",
-          "thereby creating a reactive depencency on it."
+          "thereby creating a reactive dependency on it."
         ),
         bslib::input_task_button(ns("run"), label = "Run")
       )

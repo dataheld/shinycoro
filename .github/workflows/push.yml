@@ -1,0 +1,16 @@
+# nullkomma:github:start
+name: CI
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  nullkomma:
+    uses: dataheld/nullkomma/.github/workflows/ci.yml@main
+    permissions:
+      contents: read
+      id-token: write
+# nullkomma:github:end

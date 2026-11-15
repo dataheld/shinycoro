@@ -1,0 +1,362 @@
+{
+  "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "nullkomma",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790898470,
+        "narHash": "sha256-zTwuwezD0w3hpga6a6P8emidzAZFyWqlNeRBlpWOOl8=",
+        "rev": "024633cd702b10285db5cb19b40ad48d2399ba60",
+        "revCount": 497,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/hercules-ci/flake-parts/0.1.497%2Brev-024633cd702b10285db5cb19b40ad48d2399ba60/01a0fb23-e4db-78b2-9625-e9cb19ce9ac8/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/hercules-ci/flake-parts/0.1.%2A"
+      }
+    },
+    "flake-schemas": {
+      "locked": {
+        "lastModified": 1780327564,
+        "narHash": "sha256-HiRPtA0spK+Dkgbhz/1zW9glXxNVB+L4Rj2VYmdawb8=",
+        "rev": "6cc9bd98891b1fc6bb2b8cb3277df8bc72799ca6",
+        "revCount": 149,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/DeterminateSystems/flake-schemas/0.5.0/019e83cf-9af3-78b1-ac5b-70e68ad1efe1/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/DeterminateSystems/flake-schemas/0.5.%2A"
+      }
+    },
+    "import-tree": {
+      "locked": {
+        "lastModified": 1784254960,
+        "narHash": "sha256-iI88R3wHz8wTKQb5orvpc51L/Xr64AJyxid/0MKa/b8=",
+        "owner": "vic",
+        "repo": "import-tree",
+        "rev": "4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vic",
+        "repo": "import-tree",
+        "type": "github"
+      }
+    },
+    "maxheld": {
+      "inputs": {
+        "modern2-cv": "modern2-cv",
+        "nixpkgs": [
+          "maxheld",
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "nullkomma": [
+          "nullkomma"
+        ],
+        "pillar": "pillar"
+      },
+      "locked": {
+        "lastModified": 1794061936,
+        "narHash": "sha256-ZZvKpTnHgCQFkhYjHHrzkS8mzJhKr9aePzPZ98Azdps=",
+        "rev": "854ee839db07aac0c606a20f1eb03e268ef6d3f7",
+        "revCount": 257,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/dataheld/maxheld/0.1.257%2Brev-854ee839db07aac0c606a20f1eb03e268ef6d3f7/01a1b673-6311-7953-9c19-3136132cf4ac/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/dataheld/maxheld/%2A"
+      }
+    },
+    "modern2-cv": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1730144289,
+        "narHash": "sha256-g26OWmYGlcMH0n0nrGxM/qXbHnQAcc16ZKRy2KaEWBw=",
+        "owner": "schochastics",
+        "repo": "modern2-cv",
+        "rev": "14147a8da77a7afafe9140c7ef32f2cccaddcfcb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "schochastics",
+        "repo": "modern2-cv",
+        "rev": "14147a8da77a7afafe9140c7ef32f2cccaddcfcb",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1793633738,
+        "narHash": "sha256-tItrb9M8eYA6WhFgmT9tpGKueri3+wRuVA952o/2xSU=",
+        "rev": "7dcdd87373d72e7a2173e4db02e20d3d7f495cfd",
+        "revCount": 1017737,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.2605.1017737%2Brev-7dcdd87373d72e7a2173e4db02e20d3d7f495cfd/01a19fe9-5ace-72d3-9f41-cd64567df3e3/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/NixOS/nixpkgs/0.2605.%2A"
+      }
+    },
+    "nullkomma": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "flake-schemas": "flake-schemas",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-r": [
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "process-compose-flake": "process-compose-flake",
+        "pyproject-build-systems": "pyproject-build-systems",
+        "pyproject-nix": "pyproject-nix",
+        "terraform-providers-bin": "terraform-providers-bin",
+        "terranix": "terranix",
+        "treefmt-nix": "treefmt-nix",
+        "up": "up",
+        "uv2nix": "uv2nix"
+      },
+      "locked": {
+        "lastModified": 1794562409,
+        "narHash": "sha256-mQBqiwPsfXUWoDnb1ugVUflVIdxyVZUISP3T4RLcqz8=",
+        "rev": "580ea3d531249b42791bdfd0eff49c89353521e3",
+        "revCount": 865,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/dataheld/nullkomma/0.1.865%2Brev-580ea3d531249b42791bdfd0eff49c89353521e3/01a1d450-713b-7941-8c38-44ee98ed1b92/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/dataheld/nullkomma/0.1.%2A"
+      }
+    },
+    "pillar": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1687682392,
+        "narHash": "sha256-QFjaC3QfxTGGt3JcPYeuNaZMRvo7bOMIHHyqzCoEpHs=",
+        "owner": "xriley",
+        "repo": "pillar-theme",
+        "rev": "dbe51083f1566b748c7b3cf81f3d1069b634608e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xriley",
+        "repo": "pillar-theme",
+        "rev": "dbe51083f1566b748c7b3cf81f3d1069b634608e",
+        "type": "github"
+      }
+    },
+    "process-compose-flake": {
+      "locked": {
+        "lastModified": 1791992503,
+        "narHash": "sha256-ak6baHPCy6SUTskWRfxdlgF5mtEfFx9kIMskKVPpaMY=",
+        "owner": "Platonic-Systems",
+        "repo": "process-compose-flake",
+        "rev": "8e27bc993c0156b5e033ad5889094d65fd27f623",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Platonic-Systems",
+        "repo": "process-compose-flake",
+        "type": "github"
+      }
+    },
+    "pyproject-build-systems": {
+      "inputs": {
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "pyproject-nix": [
+          "nullkomma",
+          "pyproject-nix"
+        ],
+        "uv2nix": [
+          "nullkomma",
+          "uv2nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793820911,
+        "narHash": "sha256-cc2EX2rfojnhcvqPQh4JEFGm2Mn/VoJyw5hTJTaw7Wo=",
+        "owner": "pyproject-nix",
+        "repo": "build-system-pkgs",
+        "rev": "947b2b0c973de462b19577715f04ba8d6f48ed7e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pyproject-nix",
+        "repo": "build-system-pkgs",
+        "type": "github"
+      }
+    },
+    "pyproject-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793820880,
+        "narHash": "sha256-NUMabnvaL/0Ah9WM9pBMXEp+dQjMSYjezZ/fNjXouLQ=",
+        "owner": "pyproject-nix",
+        "repo": "pyproject.nix",
+        "rev": "d43f0e74444c1f266c640fc49ce6ce6fb69d33c3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pyproject-nix",
+        "repo": "pyproject.nix",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "maxheld": "maxheld",
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "nullkomma": "nullkomma"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "terraform-providers-bin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789698037,
+        "narHash": "sha256-8/ihOyBtmanPd3qB6HkTi11KeW0bg4dnRIGfrzoo+kQ=",
+        "owner": "nix-community",
+        "repo": "nixpkgs-terraform-providers-bin",
+        "rev": "6f5dbe9186d4a26da7c8a554b45260aa95e24add",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs-terraform-providers-bin",
+        "type": "github"
+      }
+    },
+    "terranix": {
+      "inputs": {
+        "flake-parts": [
+          "nullkomma",
+          "flake-parts"
+        ],
+        "import-tree": "import-tree",
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1790023441,
+        "narHash": "sha256-9vmOUIearXFJbafvJjEd8yaQQV/dKN2J5t3rC92Hi+Y=",
+        "owner": "terranix",
+        "repo": "terranix",
+        "rev": "cb9dd00fe24f3f1323baaa19b5ee5fb514d37d77",
+        "type": "github"
+      },
+      "original": {
+        "owner": "terranix",
+        "repo": "terranix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791203292,
+        "narHash": "sha256-vuzVwvjeucSnwKwMBpyP8r5IzdrMKCHEdwTrRFwUN7I=",
+        "rev": "03d8ee1bcbc8f9638907bb79edb9673151d0e22b",
+        "revCount": 593,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/numtide/treefmt-nix/0.1.593%2Brev-03d8ee1bcbc8f9638907bb79edb9673151d0e22b/01a10d28-fe85-7ba0-9d91-820ac13e70a3/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/numtide/treefmt-nix/0.1.%2A"
+      }
+    },
+    "up": {
+      "inputs": {
+        "flake-schemas": [
+          "nullkomma",
+          "flake-schemas"
+        ],
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776825590,
+        "narHash": "sha256-v8Au0RfOD3CpfB208+J+9Wmyak8VBMzvjGMrxZFiGT0=",
+        "rev": "9679e3e9157c510033038497235790cee46e2a18",
+        "revCount": 130,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/DeterminateSystems/up/0.1.130%2Brev-9679e3e9157c510033038497235790cee46e2a18/019db30f-74b2-7d20-90f1-f92b7f56621a/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/DeterminateSystems/up/0.1.%2A"
+      }
+    },
+    "uv2nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nullkomma",
+          "nixpkgs"
+        ],
+        "pyproject-nix": [
+          "nullkomma",
+          "pyproject-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793272761,
+        "narHash": "sha256-3CE1CEwprYlHRlRVkXDkhqec0jjF9Cti7tdk8vVDsCM=",
+        "owner": "pyproject-nix",
+        "repo": "uv2nix",
+        "rev": "c361746c7d630d98b972378290547c8d35542a7a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pyproject-nix",
+        "repo": "uv2nix",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

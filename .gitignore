@@ -1,12 +1,21 @@
-.Rproj.user
-.Rhistory
+# nullkomma:git:start
+*.Rcheck/
 .RData
+.Rhistory
+.Rproj.user/
 .Ruserdata
-docs/
-man/*.Rd
-!man/figures/
-~*.xlsx
-~*.xlsm
-# {shinytest2}: Ignore new debug snapshots for `$expect_values()`
-*_.new.png
-cache/
+/man/*.Rd
+/docs/
+result
+result-*
+.direnv/
+/.nullkomma/cloudflare/
+/.nullkomma/gcroots/
+.playwright-mcp/
+/.Rprofile
+/.mcp.json
+/.nvim.lua
+/.vscode/extensions.json
+/.vscode/mcp.json
+/.vscode/settings.json
+# nullkomma:git:end
